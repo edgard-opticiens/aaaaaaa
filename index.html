@@ -88,9 +88,16 @@ function isLate(dateStr){
 }
 function fmtDate(d){
   if(!d)return'-';
-  var dt=new Date(d);
+  var dt;
+  if(typeof d==='number'||/^\d+(\.\d+)?$/.test(d)){
+    // Numéro de série Excel (ex: 46204) -> date JS
+    dt=new Date((Number(d)-25569)*86400000);
+  }else{
+    dt=new Date(d);
+  }
   if(isNaN(dt))return d;
-  return dt.toLocaleDateString('fr-FR')+' '+dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  var hasTime=dt.getHours()!==0||dt.getMinutes()!==0;
+  return dt.toLocaleDateString('fr-FR')+(hasTime?' '+dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'');
 }
 
 function render(){
